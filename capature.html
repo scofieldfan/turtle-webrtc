@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Document</title>
+    </head>
+    <body>
+        <button id="save">Take</button>
+        <canvas id="picture"></canvas>
+
+        <video autoplay playsinline></video>
+
+        <script>
+            "use strict";
+
+            const mediaStreamContrains = {
+                video: true,
+                audio: true
+            };
+
+            const localVideo = document.querySelector("video");
+
+            function gotLocalMediaStream(mediaStream) {
+                localVideo.srcObject = mediaStream;
+            }
+
+            function handleLocalMediaStreamError(error) {
+                console.log("navigator.getUserMedia error: ", error);
+            }
+
+            navigator.mediaDevices
+                .getUserMedia(mediaStreamContrains)
+                .then(gotLocalMediaStream)
+                .catch(handleLocalMediaStreamError);
+
+            var picture = document.querySelector("canvas#picture");
+            picture.width = 640;
+            picture.height = 480;
+
+            picture
+                .getContext("2d")
+                .drawImage(localVideo, 0, 0, picture.width, picture.height);
+
+            function downLoad(url) {
+                var oA = document.createElement("a");
+                oA.download = "photo"; // 设置下载的文件名，默认是'下载'
+                oA.href = url;
+                document.body.appendChild(oA);
+                oA.click();
+                oA.remove(); // 下载之后把创建的元素删除
+            }
+
+            document.querySelector("button#save").onclick = function() {
+                downLoad(picture.toDataURL("image/jpeg"));
+            };
+        </script>
+    </body>
+</html>
